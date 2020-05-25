@@ -1,8 +1,7 @@
 Class {
 	#name : #PMATask,
-	#superclass : #Object,
+	#superclass : #PMAEntity,
 	#instVars : [
-		'id',
 		'taskName',
 		'startDate',
 		'deadline',
@@ -11,6 +10,11 @@ Class {
 	],
 	#category : #'ProjectManagementApplication-Entity'
 }
+
+{ #category : #api }
+PMATask class >> tableName [
+	^ 'tasks'
+]
 
 { #category : #accessing }
 PMATask >> deadline [
@@ -30,16 +34,6 @@ PMATask >> employeeId [
 { #category : #accessing }
 PMATask >> employeeId: anObject [
 	employeeId := anObject
-]
-
-{ #category : #accessing }
-PMATask >> id [
-	^ id
-]
-
-{ #category : #accessing }
-PMATask >> id: anObject [
-	id := anObject
 ]
 
 { #category : #accessing }

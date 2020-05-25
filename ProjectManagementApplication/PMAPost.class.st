@@ -1,21 +1,15 @@
 Class {
 	#name : #PMAPost,
-	#superclass : #Object,
+	#superclass : #PMAEntity,
 	#instVars : [
-		'id',
 		'postName'
 	],
 	#category : #'ProjectManagementApplication-Entity'
 }
 
-{ #category : #accessing }
-PMAPost >> id [
-	^ id
-]
-
-{ #category : #accessing }
-PMAPost >> id: anObject [
-	id := anObject
+{ #category : #api }
+PMAPost class >> tableName [
+	^ 'posts'
 ]
 
 { #category : #accessing }

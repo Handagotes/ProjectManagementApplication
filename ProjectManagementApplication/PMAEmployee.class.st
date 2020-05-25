@@ -1,13 +1,17 @@
 Class {
 	#name : #PMAEmployee,
-	#superclass : #Object,
+	#superclass : #PMAEntity,
 	#instVars : [
-		'id',
 		'fullName',
 		'postId'
 	],
 	#category : #'ProjectManagementApplication-Entity'
 }
+
+{ #category : #api }
+PMAEmployee class >> tableName [
+	^ 'employees'
+]
 
 { #category : #accessing }
 PMAEmployee >> fullName [
@@ -17,16 +21,6 @@ PMAEmployee >> fullName [
 { #category : #accessing }
 PMAEmployee >> fullName: anObject [
 	fullName := anObject
-]
-
-{ #category : #accessing }
-PMAEmployee >> id [
-	^ id
-]
-
-{ #category : #accessing }
-PMAEmployee >> id: anObject [
-	id := anObject
 ]
 
 { #category : #accessing }

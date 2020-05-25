@@ -1,9 +1,6 @@
 Class {
 	#name : #PMAProjectDBController,
-	#superclass : #PMASingleton,
-	#instVars : [
-		'connection'
-	],
+	#superclass : #PMADBController,
 	#category : #'ProjectManagementApplication-Control'
 }
 
@@ -18,33 +15,60 @@ PMAProjectDBController class >> remove [
 	super remove
 ]
 
-{ #category : #api }
-PMAProjectDBController >> closeConnection [
-	connection ifNil: [ ^ self ].
-	connection close.
-	connection := nil
+{ #category : #private }
+PMAProjectDBController >> createTableIfNotExistsQueries [
+	^ {
+		'CREATE TABLE IF NOT EXISTS employees (
+			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			full_name varchar(255) NOT NULL,
+			post_id integer(10) NOT NULL,
+			FOREIGN KEY(post_id) REFERENCES posts(id)
+		);'.
+		'CREATE TABLE IF NOT EXISTS posts (
+			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			post_name varchar(255) NOT NULL
+		);'.
+		'CREATE TABLE IF NOT EXISTS tasks (
+			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+			task_name integer(10) NOT NULL,
+			start_date date NOT NULL,
+			deadline date NOT NULL,
+			is_done integer(10) NOT NULL,
+			employee_id integer(10) NOT NULL,
+			FOREIGN KEY(employee_id) REFERENCES employees(id)
+		);'.
+	}
 ]
 
-{ #category : #accessing }
-PMAProjectDBController >> connection [
-	^ connection
+{ #category : #api }
+PMAProjectDBController >> dbFilename [
+	^ 'project.db'
 ]
 
 { #category : #api }
 PMAProjectDBController >> deleteEmployee: employee [
-	connection
-		execute: 'DELETE FROM tasks WHERE employee_id = ?' value: employee id;
-		execute: 'DELETE FROM employees WHERE id = ?' value: employee id
+	self deleteEntity: employee.
+	connection execute: 'DELETE FROM tasks WHERE employee_id = ?' value: employee id
 ]
 
 { #category : #api }
 PMAProjectDBController >> deletePost: post [
-	connection execute: 'DELETE FROM posts WHERE id = ?' value: post id
+	self deleteEntity: post.
+	connection execute: 'DELETE FROM employees WHERE post_id = ?' value: post id
 ]
 
 { #category : #api }
 PMAProjectDBController >> deleteTask: task [
-	connection execute: 'DELETE FROM tasks WHERE id = ?' value: task id
+	self deleteEntity: task
+]
+
+{ #category : #private }
+PMAProjectDBController >> dropTableQueries [
+	^ {
+		'DROP TABLE employees;'.
+		'DROP TABLE posts;'.
+		'DROP TABLE tasks;'.
+	}
 ]
 
 { #category : #api }
@@ -207,84 +231,19 @@ PMAProjectDBController >> example [
 	tasks do: [ :t | self insertTask: t ]
 ]
 
-{ #category : #initialization }
-PMAProjectDBController >> initialize [
-	connection := nil
-]
-
 { #category : #api }
 PMAProjectDBController >> insertEmployee: employee [
-	connection
-		beginTransaction;
-		execute: 'INSERT INTO employees(full_name, post_id) VALUES(?, ?)'
-		value: employee fullName
-		value: employee postId.
-	employee id: self lastId.
-	connection commitTransaction
+	^ self insertEntity: employee
 ]
 
 { #category : #api }
 PMAProjectDBController >> insertPost: post [
-	connection
-		beginTransaction;
-		execute: 'INSERT INTO posts(post_name) VALUES(?)'
-		value: post postName.
-	post id: self lastId.
-	connection commitTransaction
+	^ self insertEntity: post
 ]
 
 { #category : #api }
 PMAProjectDBController >> insertTask: task [
-	connection
-		beginTransaction;
-		execute: 'INSERT INTO tasks(task_name, start_date, deadline, is_done, employee_id) VALUES(?, ?, ?, ?, ?)'
-		with: { 
-			task taskName.
-			task startDate.
-			task deadline.
-			task isDone.
-			task employeeId
-		}.
-	task id: self lastId.
-	connection commitTransaction
-]
-
-{ #category : #testing }
-PMAProjectDBController >> isConnected [
-	^ self connection isNotNil
-]
-
-{ #category : #accessing }
-PMAProjectDBController >> lastId [
-	^ (connection execute: 'SELECT last_insert_rowid()') next at: 1
-]
-
-{ #category : #api }
-PMAProjectDBController >> openConnection [
-	| path |
-	connection ifNotNil: [ ^ self ].
-	path := (Smalltalk imageDirectory / 'project.db') fullName.
-	(connection := SQLite3Connection openOn: path)
-		execute: 'CREATE TABLE IF NOT EXISTS employees (
-			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-			full_name varchar(255) NOT NULL,
-			post_id integer(10) NOT NULL,
-			FOREIGN KEY(post_id) REFERENCES posts(id)
-		);';
-		execute: 'CREATE TABLE IF NOT EXISTS posts (
-			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-			post_name varchar(255) NOT NULL
-		);';
-		execute: 'CREATE TABLE IF NOT EXISTS tasks (
-			id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-			task_name integer(10) NOT NULL,
-			start_date date NOT NULL,
-			deadline date NOT NULL,
-			is_done integer(10) NOT NULL,
-			employee_id integer(10) NOT NULL,
-			FOREIGN KEY(employee_id) REFERENCES employees(id)
-		);'
-
+	^ self insertEntity: task
 ]
 
 { #category : #api }
@@ -297,13 +256,6 @@ PMAProjectDBController >> postOfEmployee: employee [
 { #category : #'private - accessing' }
 PMAProjectDBController >> posts [
 	^ self selectAllFrom: #posts entityClass: PMAPost
-]
-
-{ #category : #private }
-PMAProjectDBController >> selectAllFrom: table entityClass: entityClass [
-	| cursor |
-	cursor := connection execute: 'SELECT * FROM ' , table.
-	^ cursor rowsOfClassFixed: entityClass
 ]
 
 { #category : #accessing }
@@ -325,37 +277,15 @@ PMAProjectDBController >> tasksOfEmployeeWithId: id [
 
 { #category : #api }
 PMAProjectDBController >> updateEmployee: employee [
-	self connection
-		execute: 'UPDATE employees SET full_name = ?, post_id = ? WHERE id = ?;'
-		value: employee fullName
-		value: employee postId
-		value: employee id
+	self updateEntity: employee
 ]
 
 { #category : #api }
 PMAProjectDBController >> updatePost: post [
-	self connection
-		execute: 'UPDATE posts SET post_name = ? WHERE id = ?;'
-		value: post postName
-		value: post id
+	self updateEntity: post
 ]
 
 { #category : #api }
 PMAProjectDBController >> updateTask: task [
-	self connection
-		execute: 'UPDATE tasks SET
-			task_name = ?,
-			start_date = ?,
-			deadline = ?,
-			is_done = ?,
-			employee_id = ?
-			WHERE id = ?;'
-		with: { 
-			task taskName.
-			task startDate.
-			task deadline.
-			task isDone.
-			task employeeId.
-			task id
-		}
+	self updateEntity: task
 ]
