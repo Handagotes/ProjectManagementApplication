@@ -12,10 +12,8 @@ PMANetAddressValidator class >> validateAddress: addressString onError: errorBlo
 { #category : #validation }
 PMANetAddressValidator class >> validatePort: portString onError: errorBlock [
 	| port |
-	(portString isNotEmpty
-		and: [ (portString allSatisfy: [ :c | c isDigit ])
-			and: [ (port := portString asInteger) <= 65535 ] ]) ifTrue: [ 
-		^ port
-	]
-	ifFalse: errorBlock
+	portString ifEmpty: [ ^ errorBlock value ].
+	(portString allSatisfy: [ :c | c isDigit ]) ifFalse: [ ^ errorBlock value ].
+	(port := portString asInteger) <= 65535 ifFalse: [ ^ errorBlock value ].
+	^ port
 ]
