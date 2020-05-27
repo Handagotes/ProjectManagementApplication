@@ -65,7 +65,7 @@ PMAClientController >> handleMessageFromServer: message [
 
 { #category : #initialization }
 PMAClientController >> initializeConnectionProcess [
-	connectionProcess := [ | address port uid projectName post tasks |
+	connectionProcess := [ | address port uid projectName post |
 		address := parameters at: #address.
 		port := parameters at: #port.
 		uid := parameters at: #uid ifAbsent: [ nil ].
@@ -82,15 +82,14 @@ PMAClientController >> initializeConnectionProcess [
 			post := PMASetEmployeePostDialog openNoCancel: name posts: posts.
 			socket sendMessageAndWaitForConfirm: (PMAMessage argument: post id).
 			uid := UUID fromString: socket waitForMessageAndConfirm argument.
-			tasks := socket waitForMessageAndConfirm argument.
 			announcer announce: (PMAConnectedToServerAnnouncement
 				withPost: post
 				uid: uid
 				projectName: projectName
-				tasks: tasks).
+				tasks: Array empty).
 			messageProcess resume.
 		]
-		ifNotNil: [ | auth | "есть uid - передаём серверу"
+		ifNotNil: [ | auth tasks | "есть uid - передаём серверу"
 			socket sendMessageAndWaitForConfirm: (PMAMessage argument: uid asString).
 			auth := socket waitForMessageAndConfirm argument.
 			

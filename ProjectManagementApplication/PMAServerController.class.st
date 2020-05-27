@@ -112,9 +112,7 @@ PMAServerController >> initializeConnectionProcess [
 					PMAProjectDB insertEmployee: employee.
 					uid := UUID new.
 					uidDict add: uid -> employee id.
-					socket
-						sendMessageAndWaitForConfirm: (PMAMessage argument: uid asString);
-						sendMessageAndWaitForConfirm: (PMAMessage argument: PMAProjectDB tasks asArray)
+					socket sendMessageAndWaitForConfirm: (PMAMessage argument: uid asString).
 				]
 				ifFalse: [ 
 					auth := uidDict includesKey: uid.
@@ -124,7 +122,7 @@ PMAServerController >> initializeConnectionProcess [
 						socket
 							sendMessageAndWaitForConfirm: (PMAMessage argument: (parameters at: #projectname));
 							sendMessageAndWaitForConfirm: (PMAMessage argument: (PMAProjectDB postOfEmployee: employee));
-							sendMessageAndWaitForConfirm: (PMAMessage argument: PMAProjectDB tasks asArray)
+							sendMessageAndWaitForConfirm: (PMAMessage argument: (PMAProjectDB tasksOfEmployee: employee) asArray)
 					]
 				].
 				auth ifTrue: [ 
