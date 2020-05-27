@@ -35,7 +35,7 @@ PMAPresenter >> chatText [
 
 { #category : #api }
 PMAPresenter >> extent [
-	^ 1000@500
+	^ 1000 @ 500
 ]
 
 { #category : #initialization }
@@ -45,16 +45,16 @@ PMAPresenter >> initializeAnnouncementListeners [
 
 { #category : #initialization }
 PMAPresenter >> initializeChat [
-	| inputsHistory current last |
-	inputsHistory := OrderedCollection new.
+	| inputHistory current last |
+	inputHistory := OrderedCollection new.
 	current := nil.
 	last := nil.
 	
 	sendButton action: [ | text |
 		text := messageTextInput text.
 		(text isNotNil and: [ text isNotEmpty ]) ifTrue: [ 
-			inputsHistory remove: text ifAbsent: [  ].
-			inputsHistory add: text.
+			inputHistory remove: text ifAbsent: [  ].
+			inputHistory add: text.
 			current := nil.
 			self onSendButtonClick: text.
 			messageTextInput text: String empty
@@ -68,9 +68,9 @@ PMAPresenter >> initializeChat [
 			]
 		];
 		bindKeyCombination: Character arrowUp toAction: [ 
-			inputsHistory size isZero ifFalse: [ 
+			inputHistory size isZero ifFalse: [ 
 				current ifNil: [ | text |
-					current := inputsHistory size.
+					current := inputHistory size.
 					text := messageTextInput text.
 					(text isNotNil and: [ text isNotEmpty ]) ifTrue: [ 
 						last := text
@@ -82,15 +82,15 @@ PMAPresenter >> initializeChat [
 					]
 				].
 				messageTextInput
-					text: (inputsHistory at: current);
+					text: (inputHistory at: current);
 					selectAll
 			]
 		];
 		bindKeyCombination: Character arrowDown toAction: [ 
 			current ifNotNil: [ 
-				current < inputsHistory size ifTrue: [ 
+				current < inputHistory size ifTrue: [ 
 					current := current + 1.
-					messageTextInput text: (inputsHistory at: current)
+					messageTextInput text: (inputHistory at: current)
 				]
 				ifFalse: [ 
 					current := nil.

@@ -38,6 +38,11 @@ PMADialog >> closeDialog: aResultObject [
 	self window close
 ]
 
+{ #category : #api }
+PMADialog >> extent [
+	^ 175 + (self widthOfString: PMApp appName) @ 100
+]
+
 { #category : #'private - accessing' }
 PMADialog >> result [
 	^ result
@@ -51,4 +56,9 @@ PMADialog >> result: anObject [
 { #category : #api }
 PMADialog >> title [
 	^ PMApp appName
+]
+
+{ #category : #measuring }
+PMADialog >> widthOfString: aString [
+	^ self class defaultFont widthOfString: aString
 ]

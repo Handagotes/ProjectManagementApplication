@@ -65,10 +65,7 @@ PMASetEmployeePostDialog >> cancelButton [
 
 { #category : #api }
 PMASetEmployeePostDialog >> extent [
-	| font w |
-	font := self class defaultFont.
-	w := 375 max: (15 + (font widthOfString: nameLabel label)).
-	^ w @ 125
+	^ super extent max: 15 + (self widthOfString: nameLabel label) @ 125
 ]
 
 { #category : #initialization }

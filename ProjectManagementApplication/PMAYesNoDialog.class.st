@@ -42,10 +42,7 @@ PMAYesNoDialog class >> questionIcon [
 
 { #category : #api }
 PMAYesNoDialog >> extent [
-	| font w |
-	font := self class defaultFont.
-	w := 200 max: (50 + (font widthOfString: questionLabel label)).
-	^ w @ 100
+	^ super extent max: 50 + (self widthOfString: questionLabel label) @ 100
 ]
 
 { #category : #initialization }

@@ -56,10 +56,7 @@ PMATextInputDialog >> cancelButton [
 
 { #category : #api }
 PMATextInputDialog >> extent [
-	| font w |
-	font := self class defaultFont.
-	w := 400 max: (50 + (font widthOfString: label label)).
-	^ w @ 120
+	^ super extent max: 50 + (self widthOfString: label label) @ 120
 ]
 
 { #category : #initialization }

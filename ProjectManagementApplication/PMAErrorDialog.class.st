@@ -47,10 +47,7 @@ PMAErrorDialog >> errorLabel [
 
 { #category : #api }
 PMAErrorDialog >> extent [
-	| font w |
-	font := self class defaultFont.
-	w := (190 + (font widthOfString: PMApp appName)) max: (30 + (font widthOfString: errorLabel label)).
-	^ w @ 100
+	^ super extent max: 30 + (self widthOfString: errorLabel label) @ 100
 ]
 
 { #category : #initialization }

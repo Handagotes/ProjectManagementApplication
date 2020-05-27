@@ -15,6 +15,7 @@ PMAClientController class >> globalName [
 { #category : #private }
 PMAClientController >> handleMessageFromServer: message [
 	| cmd arg |
+	message ifNil: [ ^ self ].
 	cmd := message commandCode.
 	arg := message argument.
 	
@@ -59,7 +60,7 @@ PMAClientController >> handleMessageFromServer: message [
 		^ self
 	].
 	
-	('PMAClient catched unknown message from server (commandCode: {1} argument: {2})' format: {cmd. arg}) traceCr.
+	('PMAClient catched an unknown message from server (commandCode: {1} argument: {2})' format: {cmd. arg}) traceCr.
 ]
 
 { #category : #initialization }

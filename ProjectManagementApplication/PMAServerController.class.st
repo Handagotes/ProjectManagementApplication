@@ -33,6 +33,7 @@ PMAServerController >> fireClient: id [
 { #category : #private }
 PMAServerController >> handleMessage: message fromId: id [
 	| socket cmd arg |
+	message ifNil: [ ^ self ].
 	(self isClientOnline: id) ifFalse: [ ^ self ].
 	socket := socketDict at: id.
 	cmd := message commandCode.
@@ -81,7 +82,7 @@ PMAServerController >> handleMessage: message fromId: id [
 		^ self
 	].
 	
-	('PMAServer catched unknown message from id: {1} (commandCode: {2} argument: {3})' format: {id. cmd. arg}) traceCr.
+	('PMAServer catched an unknown message from id: {1} (commandCode: {2} argument: {3})' format: {id. cmd. arg}) traceCr.
 ]
 
 { #category : #initialization }
@@ -96,6 +97,7 @@ PMAServerController >> initializeConnectionProcess [
 		[  ] whileNil: [ | socket subprocess |
 			socket := PMASocket waitForIncomingConnectionOnPort: (parameters at: #port).
 			subprocess := [ | uid employee auth |
+				employee := nil.
 				uid := UUID fromString: socket waitForMessageAndConfirm argument.
 				uid isNilUUID ifTrue: [ | name postId posts | "<- пустой uid - флаг первого подключения"
 					auth := true.

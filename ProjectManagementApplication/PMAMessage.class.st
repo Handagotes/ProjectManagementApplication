@@ -8,14 +8,14 @@ Class {
 	#category : #'ProjectManagementApplication-Util'
 }
 
-{ #category : #accessing }
+{ #category : #'instance creation' }
 PMAMessage class >> argument: argument [
 	^ self
 		commandCode: 0
 		argument: argument
 ]
 
-{ #category : #accessing }
+{ #category : #'instance creation' }
 PMAMessage class >> commandCode: commandCode [
 	^ self
 		commandCode: commandCode
@@ -32,9 +32,15 @@ PMAMessage class >> commandCode: commandCode argument: argument [
 
 { #category : #'instance creation' }
 PMAMessage class >> fromBytes: aByteArray [
+	| argString arg |
+	argString := aByteArray allButFirst asWideString.
+	[ arg := Smalltalk compiler evaluate: argString ] on: Error do: [ :e |
+		('Invalid argument for PMAMessage "{1}". Error: "{2}".' format: { argString. e messageText }) traceCr.
+		^ nil
+	].
 	^ self new
 		commandCode: aByteArray first;
-		argument: (Smalltalk compiler evaluate: aByteArray allButFirst asWideString);
+		argument: arg;
 		yourself
 ]
 
