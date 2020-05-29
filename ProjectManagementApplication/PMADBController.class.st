@@ -3,6 +3,7 @@ Class {
 	#superclass : #PMASingleton,
 	#instVars : [
 		'connection',
+		'attrDict',
 		'traceQueries'
 	],
 	#category : #'ProjectManagementApplication-Control'
@@ -10,10 +11,13 @@ Class {
 
 { #category : #private }
 PMADBController >> attributesForEntity: aPMAEntity [
-	| columns |
-	columns := connection columnNamesFor: aPMAEntity class tableName.
-	columns remove: #id.
-	^ (columns collect: [ :c | c -> c snakeToCamel uncapitalized asSymbol ]) asDictionary
+	| entityClass |
+	entityClass := aPMAEntity class.
+	^ attrDict at: entityClass ifAbsentPut: [ | columns |
+		(columns := connection columnNamesFor: entityClass tableName)
+			remove: #id.
+		(columns collect: [ :c | c -> c snakeToCamel uncapitalized asSymbol ]) asDictionary
+	]
 ]
 
 { #category : #api }
@@ -69,6 +73,7 @@ PMADBController >> dropTables [
 { #category : #initialization }
 PMADBController >> initialize [
 	connection := nil.
+	attrDict := Dictionary new.
 	traceQueries := false
 ]
 
