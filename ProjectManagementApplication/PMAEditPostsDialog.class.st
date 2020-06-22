@@ -107,6 +107,12 @@ PMAEditPostsDialog >> initializePresenter [
 		self onEditPostTextInputTextChanged
 	].
 	
+	editPostTextInput bindKeyCombination: Character cr toAction: [ 
+		postList selectedIndex isZero ifTrue: [ 
+			self onAddButtonClick
+		]
+	].
+	
 	addButton action: [ 
 		self onAddButtonClick
 	].
