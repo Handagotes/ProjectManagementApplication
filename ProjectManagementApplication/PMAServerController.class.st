@@ -175,8 +175,8 @@ PMAServerController >> notify: notificationCommand clientId: id withArgument: ar
 ]
 
 { #category : #api }
-PMAServerController >> notifyPostChanged: newPost clientId: id [
-	self notify: CMD_POST_CHANGED clientId: id
+PMAServerController >> notifyPostChanged: aPMAPost clientId: id [
+	self notify: CMD_POST_CHANGED clientId: id withArgument: aPMAPost
 ]
 
 { #category : #api }

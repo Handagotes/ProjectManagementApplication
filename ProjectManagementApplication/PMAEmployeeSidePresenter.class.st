@@ -124,12 +124,21 @@ PMAEmployeeSidePresenter >> onNewMessageAnnouncement: announcement [
 { #category : #private }
 PMAEmployeeSidePresenter >> onOpen [
 	self updateStatusLabel.
-	PMAClient startWithParameters: launchParameters
+	PMAClient startWithParameters: launchParameters.
 ]
 
 { #category : #private }
 PMAEmployeeSidePresenter >> onPostChangedAnnouncement: announcement [
-	launchParameters at: #post put: announcement newPost
+	| oldPost newPost |
+	oldPost := launchParameters at: #post.
+	newPost := announcement newPost.
+	launchParameters at: #post put: newPost.
+	self
+		updateEmployeeLabel;
+		addChatMessage: ('Руководитель сменил вашу должность с "{1}" на "{2}".' format: { 
+			oldPost postName.
+			newPost postName.
+		})
 ]
 
 { #category : #private }

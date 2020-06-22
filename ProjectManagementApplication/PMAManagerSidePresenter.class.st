@@ -302,7 +302,6 @@ PMAManagerSidePresenter >> onOpen [
 	].
 	
 	PMAProjectDB openConnection.
-	PMAServer startWithParameters: launchParameters.
 	
 	firstLaunch ifFalse: [ 
 		manager := launchParameters at: #manager.
@@ -330,6 +329,8 @@ PMAManagerSidePresenter >> onOpen [
 	self
 		updateEmployeeDropList;
 		updateTaskTable.
+	
+	PMAServer startWithParameters: launchParameters.
 ]
 
 { #category : #private }
@@ -377,7 +378,7 @@ PMAManagerSidePresenter >> onTaskDoneButtonClick [
 PMAManagerSidePresenter >> onViewEmployeeListMenuItemClick [
 	PMAEditableEmployeeTableViewDialog
 		openEmployees: PMAProjectDB employees
-		posts: PMAProjectDB posts
+		posts: (PMAProjectDB posts reject: [ :p | p postName = 'Руководитель' ])
 		managerPresenter: self
 ]
 

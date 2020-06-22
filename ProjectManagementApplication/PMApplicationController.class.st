@@ -91,5 +91,5 @@ PMApplicationController >> shortWait [
 
 { #category : #versions }
 PMApplicationController >> version [
-	^ '1.0'
+	^ '1.1'
 ]
