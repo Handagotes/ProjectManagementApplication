@@ -80,6 +80,11 @@ PMAProjectDBController >> dropTables [
 ]
 
 { #category : #api }
+PMAProjectDBController >> editablePosts [
+	^ self posts reject: [ :p | p postName = 'Руководитель' ]
+]
+
+{ #category : #api }
 PMAProjectDBController >> employeeWithId: id [
 	| cursor |
 	cursor := connection execute: 'SELECT * FROM employees WHERE id = ?' value: id.

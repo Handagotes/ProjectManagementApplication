@@ -103,7 +103,7 @@ PMAServerController >> initializeConnectionProcess [
 					auth := true.
 					name := socket waitForMessageAndConfirm argument.
 					socket sendMessageAndWaitForConfirm: (PMAMessage argument: (parameters at: #projectname)).
-					posts := PMAProjectDB posts reject: [ :p | p postName = 'Руководитель' ].
+					posts := PMAProjectDB editablePosts.
 					socket sendMessageAndWaitForConfirm: (PMAMessage argument: posts).
 					postId := socket waitForMessageAndConfirm argument.
 					(employee := PMAEmployee new)

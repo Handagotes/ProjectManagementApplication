@@ -85,7 +85,7 @@ PMAEditableEmployeeTableViewDialog >> onChangePostButtonClick [
 	employee id = managerPresenter manager id ifTrue: [ ^ self ].
 	newPost := PMASetEmployeePostDialog
 		open: employee fullName
-		posts: PMAProjectDB posts
+		posts: PMAProjectDB editablePosts
 		current: (item at: #post) postName.
 	newPost ifNil: [ ^ self ].
 	item at: #post put: newPost.

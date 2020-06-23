@@ -216,9 +216,8 @@ PMAManagerSidePresenter >> onCloseProjectMenuItemClick [
 
 { #category : #private }
 PMAManagerSidePresenter >> onEditPostsMenuItemClick [
-	| editablePosts changes |
-	editablePosts := PMAProjectDB posts reject: [ :p | p postName = 'Руководитель' ].
-	(changes := PMAEditPostsDialog open: editablePosts)
+	| changes |
+	(changes := PMAEditPostsDialog open: PMAProjectDB editablePosts)
 		ifNil: [ ^ self ].
 	
 	(changes at: #added) do: [ :p |
